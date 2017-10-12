@@ -1284,6 +1284,24 @@ else
   :
 fi
 
+#specific checks - are we in an lxd/lxc container
+lxccontainer = `grep -qa container=lxc /proc/1/environ`
+if ["$lxccontainer"]; then
+  echo -e "\e[00;33mLooks like we're in an lxc container:\e[00m\n$lxccontainer" |tee -a $report 2>/dev/null
+  echo -e "\n" |tee -a $report 2>/dev/null
+else
+  :
+fi
+
+#specific checks - are we a member of the lxd group
+lxdgroup=`id | grep -i lxd 2>/dev/null`
+if [ "$lxdgroup" ]; then
+  echo -e "\e[00;33mWe're a member of the (lxd) group - could possibly misuse these rights!:\e[00m\n$lxdgroup" |tee -a $report 2>/dev/null
+  echo -e "\n" |tee -a $report 2>/dev/null
+else 
+  :
+fi
+
 echo -e "\e[00;33m### SCAN COMPLETE ####################################\e[00m" |tee -a $report 2>/dev/null
 
 #EndOfScript
